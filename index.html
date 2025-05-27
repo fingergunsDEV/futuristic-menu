@@ -1,0 +1,584 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Mega Menu with Micro Interactions</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      overflow-x: hidden;
+      background-color: #0f172a;
+    }
+
+    .mega-menu {
+      transform: translateY(-100%);
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+
+    .mega-menu.active {
+      transform: translateY(0);
+      pointer-events: all;
+    }
+
+    .menu-item {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .menu-item::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: #38bdf8;
+      transition: width 0.3s ease;
+    }
+
+    .menu-item:hover::after {
+      width: 100%;
+    }
+
+    .menu-card {
+      transition: all 0.3s ease;
+      transform: translateY(10px);
+      opacity: 0;
+    }
+
+    .menu-card.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .menu-card:hover {
+      transform: translateY(-5px) scale(1.02);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    .canvas-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      opacity: 0.7;
+    }
+
+    .btn-primary {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.6s ease, height 0.6s ease;
+    }
+
+    .btn-primary:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    .submenu-item {
+      transition: all 0.3s ease;
+    }
+
+    .submenu-item:hover {
+      transform: translateX(5px);
+      color: #38bdf8;
+    }
+
+    .menu-icon {
+      transition: transform 0.3s ease;
+    }
+
+    .menu-icon:hover {
+      transform: scale(1.2);
+    }
+
+    .close-btn {
+      transition: transform 0.3s ease;
+    }
+
+    .close-btn:hover {
+      transform: rotate(90deg);
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+  <header class="bg-slate-800 text-white py-4 px-6 flex justify-between items-center relative z-50">
+    <div class="flex items-center">
+      <div class="text-2xl font-bold bg-gradient-to-r from-sky-400 to-indigo-500 bg-clip-text text-transparent">
+        COSMOS
+      </div>
+    </div>
+    <nav>
+      <ul class="flex space-x-8">
+        <li><a href="#" class="menu-item text-sm font-medium hover:text-sky-400" data-menu="products">Products</a></li>
+        <li><a href="#" class="menu-item text-sm font-medium hover:text-sky-400" data-menu="solutions">Solutions</a></li>
+        <li><a href="#" class="menu-item text-sm font-medium hover:text-sky-400" data-menu="resources">Resources</a></li>
+        <li><a href="#" class="menu-item text-sm font-medium hover:text-sky-400" data-menu="company">Company</a></li>
+      </ul>
+    </nav>
+    <div>
+      <button class="bg-sky-500 hover:bg-sky-600 px-4 py-2 rounded-md text-sm font-medium btn-primary">
+        Get Started
+      </button>
+    </div>
+  </header>
+
+  <div class="mega-menu fixed top-0 left-0 w-full h-screen bg-slate-900 z-40 overflow-hidden">
+    <div class="canvas-container" id="menu-background"></div>
+    <div class="container mx-auto px-6 py-16 relative z-10">
+      <div class="flex justify-end mb-8">
+        <button class="close-btn text-white opacity-70 hover:opacity-100">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Products Menu -->
+      <div class="menu-content hidden" id="products-menu">
+        <h2 class="text-3xl font-bold text-white mb-8">Our Products</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="menu-card bg-gradient-to-br from-slate-800 to-slate-700 rounded-xl p-6 shadow-lg">
+            <div class="menu-icon bg-sky-500/20 p-3 rounded-lg inline-block mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-white mb-2">Analytics Platform</h3>
+            <p class="text-slate-300 mb-4">Advanced data visualization and insights for your business.</p>
+            <a href="#" class="text-sky-400 font-medium flex items-center hover:text-sky-300">
+              Learn more
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </a>
+          </div>
+          <div class="menu-card bg-gradient-to-br from-slate-800 to-slate-700 rounded-xl p-6 shadow-lg">
+            <div class="menu-icon bg-indigo-500/20 p-3 rounded-lg inline-block mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-white mb-2">3D Modeling Suite</h3>
+            <p class="text-slate-300 mb-4">Create stunning 3D models with our intuitive tools.</p>
+            <a href="#" class="text-indigo-400 font-medium flex items-center hover:text-indigo-300">
+              Learn more
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </a>
+          </div>
+          <div class="menu-card bg-gradient-to-br from-slate-800 to-slate-700 rounded-xl p-6 shadow-lg">
+            <div class="menu-icon bg-purple-500/20 p-3 rounded-lg inline-block mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-white mb-2">AI Assistant</h3>
+            <p class="text-slate-300 mb-4">Intelligent automation for your workflow and tasks.</p>
+            <a href="#" class="text-purple-400 font-medium flex items-center hover:text-purple-300">
+              Learn more
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Solutions Menu -->
+      <div class="menu-content hidden" id="solutions-menu">
+        <h2 class="text-3xl font-bold text-white mb-8">Solutions</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div class="menu-card bg-gradient-to-br from-slate-800 to-slate-700 rounded-xl p-6 shadow-lg">
+            <h3 class="text-xl font-semibold text-white mb-4">By Industry</h3>
+            <ul class="space-y-3">
+              <li class="submenu-item text-slate-300 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                </svg>
+                Finance & Banking
+              </li>
+              <li class="submenu-item text-slate-300 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                </svg>
+                Healthcare
+              </li>
+              <li class="submenu-item text-slate-300 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                Enterprise
+              </li>
+              <li class="submenu-item text-slate-300 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+                Education
+              </li>
+            </ul>
+          </div>
+          <div class="menu-card bg-gradient-to-br from-slate-800 to-slate-700 rounded-xl p-6 shadow-lg">
+            <h3 class="text-xl font-semibold text-white mb-4">By Use Case</h3>
+            <ul class="space-y-3">
+              <li class="submenu-item text-slate-300 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+                Security & Compliance
+              </li>
+              <li class="submenu-item text-slate-300 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+                Cloud Migration
+              </li>
+              <li class="submenu-item text-slate-300 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                Data Analytics
+              </li>
+              <li class="submenu-item text-slate-300 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+                </svg>
+                Automation
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resources Menu -->
+      <div class="menu-content hidden" id="resources-menu">
+        <h2 class="text-3xl font-bold text-white mb-8">Resources</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="menu-card bg-gradient-to-br from-slate-800 to-slate-700 rounded-xl p-6 shadow-lg">
+            <div class="menu-icon bg-emerald-500/20 p-3 rounded-lg inline-block mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-white mb-2">Documentation</h3>
+            <p class="text-slate-300 mb-4">Comprehensive guides and API references.</p>
+            <a href="#" class="text-emerald-400 font-medium flex items-center hover:text-emerald-300">
+              Browse docs
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </a>
+          </div>
+          <div class="menu-card bg-gradient-to-br from-slate-800 to-slate-700 rounded-xl p-6 shadow-lg">
+            <div class="menu-icon bg-amber-500/20 p-3 rounded-lg inline-block mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path d="M12 14l9-5-9-5-9 5 9 5z" />
+                <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-white mb-2">Learning Center</h3>
+            <p class="text-slate-300 mb-4">Tutorials, courses, and educational content.</p>
+            <a href="#" class="text-amber-400 font-medium flex items-center hover:text-amber-300">
+              Start learning
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </a>
+          </div>
+          <div class="menu-card bg-gradient-to-br from-slate-800 to-slate-700 rounded-xl p-6 shadow-lg">
+            <div class="menu-icon bg-rose-500/20 p-3 rounded-lg inline-block mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-white mb-2">Events</h3>
+            <p class="text-slate-300 mb-4">Webinars, conferences, and meetups.</p>
+            <a href="#" class="text-rose-400 font-medium flex items-center hover:text-rose-300">
+              View calendar
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Company Menu -->
+      <div class="menu-content hidden" id="company-menu">
+        <h2 class="text-3xl font-bold text-white mb-8">Company</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div class="menu-card bg-gradient-to-br from-slate-800 to-slate-700 rounded-xl p-6 shadow-lg">
+            <h3 class="text-xl font-semibold text-white mb-4">About Us</h3>
+            <p class="text-slate-300 mb-6">We're on a mission to transform how businesses interact with technology. Our innovative solutions empower organizations to achieve more with less effort.</p>
+            <div class="flex space-x-4">
+              <a href="#" class="bg-white/10 hover:bg-white/20 p-2 rounded-full transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-sky-400">
+                  <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+                </svg>
+              </a>
+              <a href="#" class="bg-white/10 hover:bg-white/20 p-2 rounded-full transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-sky-400">
+                  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+                  <rect x="2" y="9" width="4" height="12"></rect>
+                  <circle cx="4" cy="4" r="2"></circle>
+                </svg>
+              </a>
+              <a href="#" class="bg-white/10 hover:bg-white/20 p-2 rounded-full transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-sky-400">
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                </svg>
+              </a>
+            </div>
+          </div>
+          <div class="menu-card bg-gradient-to-br from-slate-800 to-slate-700 rounded-xl p-6 shadow-lg">
+            <h3 class="text-xl font-semibold text-white mb-4">Quick Links</h3>
+            <div class="grid grid-cols-2 gap-4">
+              <a href="#" class="submenu-item text-slate-300 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                Team
+              </a>
+              <a href="#" class="submenu-item text-slate-300 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                Careers
+              </a>
+              <a href="#" class="submenu-item text-slate-300 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+                Offices
+              </a>
+              <a href="#" class="submenu-item text-slate-300 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+                Contact
+              </a>
+              <a href="#" class="submenu-item text-slate-300 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+                Privacy
+              </a>
+              <a href="#" class="submenu-item text-slate-300 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Terms
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main class="container mx-auto px-6 py-16">
+    <div class="text-center max-w-3xl mx-auto">
+      <h1 class="text-4xl md:text-5xl font-bold text-white mb-6">Experience our interactive 3D mega menu</h1>
+      <p class="text-xl text-slate-300 mb-8">Click on any navigation item above to see the animated 3D mega menu with micro interactions.</p>
+      <button class="bg-gradient-to-r from-sky-500 to-indigo-500 px-6 py-3 rounded-lg text-white font-medium hover:from-sky-600 hover:to-indigo-600 transition-all shadow-lg btn-primary">
+        Explore Features
+      </button>
+    </div>
+  </main>
+
+  <script>
+    // Initialize Three.js scene
+    function initThreeScene() {
+      const container = document.getElementById('menu-background');
+      
+      // Create scene, camera, and renderer
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ alpha: true });
+      
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      renderer.setPixelRatio(window.devicePixelRatio);
+      container.appendChild(renderer.domElement);
+      
+      // Create particles
+      const particlesGeometry = new THREE.BufferGeometry();
+      const particlesCount = 1000;
+      
+      const posArray = new Float32Array(particlesCount * 3);
+      const scaleArray = new Float32Array(particlesCount);
+      
+      for (let i = 0; i < particlesCount * 3; i += 3) {
+        // Position
+        posArray[i] = (Math.random() - 0.5) * 10;
+        posArray[i + 1] = (Math.random() - 0.5) * 10;
+        posArray[i + 2] = (Math.random() - 0.5) * 10;
+        
+        // Scale
+        scaleArray[i / 3] = Math.random();
+      }
+      
+      particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+      particlesGeometry.setAttribute('scale', new THREE.BufferAttribute(scaleArray, 1));
+      
+      // Material
+      const particlesMaterial = new THREE.PointsMaterial({
+        size: 0.05,
+        color: 0x38bdf8,
+        transparent: true,
+        opacity: 0.8,
+        sizeAttenuation: true
+      });
+      
+      // Mesh
+      const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+      scene.add(particlesMesh);
+      
+      // Position camera
+      camera.position.z = 5;
+      
+      // Mouse movement effect
+      let mouseX = 0;
+      let mouseY = 0;
+      
+      document.addEventListener('mousemove', (event) => {
+        mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+        mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+      });
+      
+      // Animation loop
+      const animate = () => {
+        requestAnimationFrame(animate);
+        
+        particlesMesh.rotation.x += 0.001;
+        particlesMesh.rotation.y += 0.001;
+        
+        // Subtle mouse follow effect
+        particlesMesh.rotation.x += mouseY * 0.001;
+        particlesMesh.rotation.y += mouseX * 0.001;
+        
+        renderer.render(scene, camera);
+      };
+      
+      animate();
+      
+      // Handle window resize
+      window.addEventListener('resize', () => {
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+      });
+      
+      return { scene, camera, renderer, particlesMesh };
+    }
+    
+    // Menu functionality
+    document.addEventListener('DOMContentLoaded', () => {
+      const menuItems = document.querySelectorAll('.menu-item');
+      const megaMenu = document.querySelector('.mega-menu');
+      const closeBtn = document.querySelector('.close-btn');
+      const menuContents = document.querySelectorAll('.menu-content');
+      let threeJsScene = null;
+      
+      // Initialize Three.js when menu is first opened
+      function initThreeJsIfNeeded() {
+        if (!threeJsScene) {
+          threeJsScene = initThreeScene();
+        }
+      }
+      
+      // Show menu cards with staggered animation
+      function animateMenuCards(menuId) {
+        const cards = document.querySelectorAll(`#${menuId} .menu-card`);
+        cards.forEach((card, index) => {
+          setTimeout(() => {
+            card.classList.add('show');
+          }, 100 * index);
+        });
+      }
+      
+      // Hide all menu cards
+      function hideAllMenuCards() {
+        const cards = document.querySelectorAll('.menu-card');
+        cards.forEach(card => {
+          card.classList.remove('show');
+        });
+      }
+      
+      // Open menu
+      menuItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+          e.preventDefault();
+          
+          const menuId = item.getAttribute('data-menu') + '-menu';
+          
+          // Hide all menu contents
+          menuContents.forEach(content => {
+            content.classList.add('hidden');
+          });
+          
+          // Show selected menu content
+          document.getElementById(menuId).classList.remove('hidden');
+          
+          // Show mega menu
+          megaMenu.classList.add('active');
+          
+          // Initialize Three.js if needed
+          initThreeJsIfNeeded();
+          
+          // Hide all cards first
+          hideAllMenuCards();
+          
+          // Animate cards with delay
+          setTimeout(() => {
+            animateMenuCards(menuId);
+          }, 300);
+        });
+      });
+      
+      // Close menu
+      closeBtn.addEventListener('click', () => {
+        megaMenu.classList.remove('active');
+        hideAllMenuCards();
+      });
+      
+      // Close menu when clicking outside
+      document.addEventListener('click', (e) => {
+        if (megaMenu.classList.contains('active') && 
+            !e.target.closest('.mega-menu') && 
+            !e.target.closest('.menu-item')) {
+          megaMenu.classList.remove('active');
+          hideAllMenuCards();
+        }
+      });
+    });
+  </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9466c10ed0460ff4',t:'MTc0ODM2MTkzMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
