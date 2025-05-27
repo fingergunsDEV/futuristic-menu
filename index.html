@@ -10,243 +10,53 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
     body { font-family: 'Poppins', sans-serif; overflow-x: hidden; background-color: #0f172a; color: #e2e8f0; }
-    .mega-menu { 
-      transform: translateY(-100%); 
-      transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
-      pointer-events: none; 
-      padding-top: 4rem; 
-      backdrop-filter: blur(20px);
-      background: rgba(15, 23, 42, 0.98);
-    }
+    .mega-menu { transform: translateY(-100%); transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); pointer-events: none; padding-top: 4rem; }
     .mega-menu.active { transform: translateY(0); pointer-events: all; }
-    .menu-item-nav { 
-      position: relative; 
-      overflow: hidden; 
-      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
-      cursor: pointer; 
-      padding: 0.5rem 0;
-    }
-    .menu-item-nav::after { 
-      content: ''; 
-      position: absolute; 
-      bottom: -2px; 
-      left: 0; 
-      width: 0; 
-      height: 3px; 
-      background: linear-gradient(90deg, #38bdf8, #8b5cf6);
-      transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
-      border-radius: 2px;
-    }
+    .menu-item-nav { position: relative; overflow: hidden; transition: all 0.3s ease; cursor: pointer; }
+    .menu-item-nav::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 0; height: 2px; background-color: #38bdf8; transition: width 0.3s ease; }
     .menu-item-nav:hover::after { width: 100%; }
-    .menu-item-nav:hover { 
-      transform: translateY(-2px);
-      text-shadow: 0 4px 15px rgba(56, 189, 248, 0.4);
-    }
-    .menu-card-interactive { 
-      transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(51, 65, 85, 0.6));
-      border: 1px solid rgba(56, 189, 248, 0.2);
-      backdrop-filter: blur(10px);
-    }
-    .menu-card-interactive:hover { 
-      transform: translateY(-8px) scale(1.03) rotateX(5deg); 
-      box-shadow: 
-        0 25px 50px -12px rgba(56, 189, 248, 0.25),
-        0 0 0 1px rgba(56, 189, 248, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-      background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(139, 92, 246, 0.1));
-    }
-    .canvas-container { 
-      position: absolute; 
-      top: 0; 
-      left: 0; 
-      width: 100%; 
-      height: 100%; 
-      z-index: 0; 
-      opacity: 0.2;
-      filter: blur(0.5px);
-    }
-    footer .canvas-container { opacity: 0.15; }
-    .btn-primary { 
-      position: relative; 
-      overflow: hidden; 
-      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      background: linear-gradient(135deg, #0ea5e9, #8b5cf6);
-      box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
-    }
-    .btn-primary::before { 
-      content: ''; 
-      position: absolute; 
-      top: 50%; 
-      left: 50%; 
-      width: 0; 
-      height: 0; 
-      background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
-      border-radius: 50%; 
-      transform: translate(-50%, -50%); 
-      transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
-    }
-    .btn-primary:hover {
-      transform: translateY(-3px) scale(1.05);
-      box-shadow: 0 8px 25px rgba(56, 189, 248, 0.4);
-    }
-    .btn-primary:hover::before { width: 400px; height: 400px; }
-    .submenu-item { 
-      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
-      display: block; 
-      padding: 6px 0; 
-      color: #cbd5e1;
-      position: relative;
-    }
-    .submenu-item::before {
-      content: '';
+    .menu-card-interactive:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 20px 25px -5px rgba(56, 189, 248, 0.2), 0 10px 10px -5px rgba(56, 189, 248, 0.1); }
+    
+    .canvas-container {
       position: absolute;
-      left: -8px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 4px;
-      height: 0;
-      background: linear-gradient(180deg, #38bdf8, #8b5cf6);
-      border-radius: 2px;
-      transition: height 0.3s ease;
-    }
-    .footer-link { 
-      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
-      display: block; 
-      padding: 4px 0; 
-      color: #94a3b8; 
-    }
-    .submenu-item:hover, .footer-link:hover { 
-      transform: translateX(8px); 
-      color: #38bdf8;
-      text-shadow: 0 2px 8px rgba(56, 189, 248, 0.3);
-    }
-    .submenu-item:hover::before {
-      height: 100%;
-    }
-    .footer-contact-link { 
-      color: #818cf8; 
-      display: inline-flex; 
-      align-items: center;
-      transition: all 0.3s ease;
-    }
-    .footer-contact-link:hover { 
-      color: #a5b4fc;
-      transform: translateX(4px);
-    }
-    .close-btn { 
-      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      padding: 0.5rem;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-    }
-    .close-btn:hover { 
-      transform: rotate(180deg) scale(1.1); 
-      color: #38bdf8;
-      background: rgba(56, 189, 248, 0.2);
-      box-shadow: 0 8px 25px rgba(56, 189, 248, 0.3);
-    }
-    .custom-scrollbar::-webkit-scrollbar { width: 8px; }
-    .custom-scrollbar::-webkit-scrollbar-track { 
-      background: rgba(255, 255, 255, 0.05); 
-      border-radius: 10px; 
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb { 
-      background: linear-gradient(180deg, #38bdf8, #8b5cf6);
-      border-radius: 10px; 
-      border: 2px solid rgba(255, 255, 255, 0.1);
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover { 
-      background: linear-gradient(180deg, #0ea5e9, #7c3aed);
-    }
-    .animated-bg { 
-      background: linear-gradient(-45deg, #0f172a, #1e293b, #0f3460, #0a2342, #1a202c); 
-      background-size: 400% 400%; 
-      animation: gradient 20s ease infinite; 
-    }
-    @keyframes gradient { 
-      0%, 100% { background-position: 0% 50%; } 
-      25% { background-position: 100% 50%; }
-      50% { background-position: 100% 100%; }
-      75% { background-position: 0% 100%; }
-    }
-    .gradient-text { 
-      background: linear-gradient(135deg, #38bdf8, #8b5cf6, #06b6d4);
-      background-size: 200% 200%;
-      animation: gradientShift 3s ease infinite;
-      -webkit-background-clip: text; 
-      background-clip: text; 
-      color: transparent; 
-    }
-    @keyframes gradientShift {
-      0%, 100% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-    }
-    .hamburger-line { 
-      width: 22px; 
-      height: 2.5px; 
-      background: linear-gradient(90deg, #38bdf8, #8b5cf6);
-      display: block; 
-      margin: 4px auto; 
-      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      border-radius: 2px;
-    }
-    .mega-menu.active .hamburger-line-1 { 
-      transform: rotate(45deg) translate(5px, 5px); 
-      background: linear-gradient(90deg, #f59e0b, #ef4444);
-    }
-    .mega-menu.active .hamburger-line-2 { 
-      opacity: 0; 
-      transform: scale(0);
-    }
-    .mega-menu.active .hamburger-line-3 { 
-      transform: rotate(-45deg) translate(5px, -5px); 
-      background: linear-gradient(90deg, #f59e0b, #ef4444);
-    }
-    .header-glow {
-      box-shadow: 0 4px 20px rgba(56, 189, 248, 0.1);
-    }
-    .menu-section-title {
-      background: linear-gradient(135deg, #38bdf8, #8b5cf6);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      position: relative;
-    }
-    .menu-section-title::after {
-      content: '';
-      position: absolute;
-      bottom: -4px;
+      top: 0;
       left: 0;
-      right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, #38bdf8, #8b5cf6);
-      border-radius: 1px;
+      width: 100%;
+      height: 100%;
+      z-index: -1; /* Ensures canvas is behind other content in the same stacking context */
+      opacity: 0.15; 
     }
-    .interactive-demo-card {
-      background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(139, 92, 246, 0.1));
-      border: 1px solid rgba(56, 189, 248, 0.3);
-      backdrop-filter: blur(15px);
-      transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-    .interactive-demo-card:hover {
-      transform: translateY(-10px) rotateX(8deg) rotateY(2deg);
-      box-shadow: 
-        0 30px 60px -12px rgba(56, 189, 248, 0.3),
-        0 0 0 1px rgba(56, 189, 248, 0.4),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    }
+    footer .canvas-container { opacity: 0.1; }
+
+    .btn-primary { position: relative; overflow: hidden; transition: all 0.3s ease; }
+    .btn-primary::before { content: ''; position: absolute; top: 50%; left: 50%; width: 0; height: 0; background-color: rgba(255, 255, 255, 0.2); border-radius: 50%; transform: translate(-50%, -50%); transition: width 0.6s ease, height 0.6s ease; }
+    .btn-primary:hover::before { width: 300px; height: 300px; }
+    .submenu-item { transition: all 0.2s ease-in-out; display: block; padding: 4px 0; color: #cbd5e1; }
+    .footer-link { transition: all 0.2s ease-in-out; display: block; padding: 3px 0; color: #94a3b8; }
+    .submenu-item:hover, .footer-link:hover { transform: translateX(3px); color: #38bdf8; }
+    .footer-contact-link { color: #818cf8; display: inline-flex; align-items: center; }
+    .footer-contact-link:hover { color: #a5b4fc; }
+    .close-btn { transition: transform 0.3s ease, color 0.3s ease; }
+    .close-btn:hover { transform: rotate(90deg); color: #38bdf8; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #38bdf8; border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #0ea5e9; }
+    .animated-bg { background: linear-gradient(-45deg, #0f172a, #1e293b, #0f3460, #0a2342); background-size: 400% 400%; animation: gradient 15s ease infinite; }
+    @keyframes gradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+    .gradient-text { background-image: linear-gradient(to right, #38bdf8, #818cf8); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .hamburger-line { width: 20px; height: 2px; background-color: white; display: block; margin: 4px auto; transition: all 0.3s ease-in-out; }
+    .mega-menu.active .hamburger-line-1 { transform: rotate(45deg) translate(4px, 4px); }
+    .mega-menu.active .hamburger-line-2 { opacity: 0; }
+    .mega-menu.active .hamburger-line-3 { transform: rotate(-45deg) translate(4px, -4px); }
   </style>
 </head>
 <body class="min-h-screen animated-bg text-slate-100">
-  <header class="bg-slate-800/90 backdrop-blur-md text-white py-4 px-6 flex justify-between items-center fixed top-0 left-0 right-0 z-50 header-glow h-16">
-    <!-- ...existing header content... -->
-    <a href="https://www.holisticgrowthmarketing.com/" class="text-xl md:text-2xl font-bold gradient-text flex items-center">
+  <header class="bg-slate-800/90 backdrop-blur-md text-white py-4 px-6 flex justify-between items-center fixed top-0 left-0 right-0 z-50 shadow-lg h-16">
+    <a href="https://www.holisticgrowthmarketing.com/" class="text-xl md:text-2xl font-bold bg-gradient-to-r from-sky-400 to-indigo-500 bg-clip-text text-transparent flex items-center">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 md:h-8 md:w-8 mr-2" viewBox="0 0 20 20" fill="currentColor"> <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" /> </svg>
       Holistic Growth Marketing
     </a>
-    <!-- ...existing nav and buttons... -->
     <nav class="hidden md:flex">
       <ul class="flex space-x-5 lg:space-x-6">
         <li><span class="menu-item-nav text-xs lg:text-sm font-medium hover:text-sky-400" data-menu="services">Services</span></li>
@@ -265,61 +75,33 @@
     </div>
   </header>
 
-  <div class="mega-menu fixed inset-0 z-40 overflow-hidden" id="mega-menu-content-wrapper">
+  <div class="mega-menu fixed inset-0 bg-slate-900/95 backdrop-blur-md z-40 overflow-hidden" id="mega-menu-content-wrapper">
     <div class="canvas-container" id="menu-background"></div>
     <div class="container mx-auto px-4 sm:px-6 py-6 relative z-10 h-full flex flex-col">
       <div class="flex justify-end mb-2 md:mb-4">
         <button class="close-btn text-white opacity-70 hover:opacity-100 hidden md:block">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
         </button>
       </div>
       <div class="flex-grow overflow-y-auto custom-scrollbar max-h-[calc(100vh-8rem)] md:max-h-[calc(100vh-10rem)]">
-        <!-- Services Menu -->
+        <!-- Mega Menu Content (Services, Industries, etc.) -->
         <div class="menu-content hidden" id="services-menu">
-          <div class="flex items-center mb-8">
-            <h2 class="text-3xl md:text-4xl font-bold menu-section-title">Our Services</h2>
-            <div class="h-0.5 md:h-1 bg-gradient-to-r from-sky-500 to-indigo-500 flex-grow ml-6 rounded-full"></div>
+          <div class="flex items-center mb-6"><h2 class="text-2xl md:text-3xl font-bold text-white">Our Services</h2><div class="h-0.5 md:h-1 bg-gradient-to-r from-sky-500 to-indigo-500 flex-grow ml-4 rounded-full"></div></div>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-4 md:gap-y-6">
+            <div><h3 class="text-lg md:text-xl font-semibold text-sky-400 mb-2 md:mb-3">SEO Services</h3><ul class="space-y-1 text-sm" id="services-seo-links"></ul></div>
+            <div><h3 class="text-lg md:text-xl font-semibold text-sky-400 mb-2 md:mb-3">Content & Digital</h3><ul class="space-y-1 text-sm" id="services-content-digital-links"></ul></div>
+            <div><h3 class="text-lg md:text-xl font-semibold text-sky-400 mb-2 md:mb-3">Data, Analytics & Web</h3><ul class="space-y-1 text-sm" id="services-data-web-links"></ul></div>
+            <div><h3 class="text-lg md:text-xl font-semibold text-sky-400 mb-2 md:mb-3">Optimization & Mgmt</h3><ul class="space-y-1 text-sm" id="services-optimization-mgmt-links"></ul><a href="https://www.holisticgrowthmarketing.com/services" class="mt-3 inline-block text-sky-400 font-medium hover:text-sky-300 text-xs md:text-sm">View All Services →</a></div>
           </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-6 md:gap-y-8">
-            <div><h3 class="text-lg md:text-xl font-semibold text-sky-400 mb-3 md:mb-4">SEO Services</h3><ul class="space-y-2 text-sm" id="services-seo-links"></ul></div>
-            <div><h3 class="text-lg md:text-xl font-semibold text-sky-400 mb-3 md:mb-4">Content & Digital</h3><ul class="space-y-2 text-sm" id="services-content-digital-links"></ul></div>
-            <div><h3 class="text-lg md:text-xl font-semibold text-sky-400 mb-3 md:mb-4">Data, Analytics & Web</h3><ul class="space-y-2 text-sm" id="services-data-web-links"></ul></div>
-            <div><h3 class="text-lg md:text-xl font-semibold text-sky-400 mb-3 md:mb-4">Optimization & Mgmt</h3><ul class="space-y-2 text-sm" id="services-optimization-mgmt-links"></ul><a href="https://www.holisticgrowthmarketing.com/services" class="mt-4 inline-block text-sky-400 font-medium hover:text-sky-300 text-sm transition-colors">View All Services →</a></div>
-          </div>
-          <div class="mt-12 pt-8 border-t border-slate-700/50">
-            <div class="flex items-center mb-8">
-              <h3 class="text-2xl md:text-3xl font-bold menu-section-title">Interactive Dashboards & Demos</h3>
-              <div class="h-0.5 md:h-1 bg-gradient-to-r from-teal-400 to-cyan-500 flex-grow ml-6 rounded-full"></div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-                <div class="interactive-demo-card p-6 rounded-xl shadow-xl transition-all duration-500">
-                  <h4 class="text-xl font-semibold text-teal-300 mb-3">SEO Performance Dashboard</h4>
-                  <p class="text-slate-300 text-sm mb-4 leading-relaxed">Track your keyword rankings, organic traffic, backlink profile, and technical SEO health in real-time.</p>
-                  <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
-                    <a href="/demo/marketing-dashboard" class="flex-1 text-center bg-teal-600 hover:bg-teal-500 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 hover:shadow-lg">View Demo</a>
-                    <a href="#try-free-seo" class="flex-1 text-center bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-600 text-white px-4 py-2.5 rounded-lg text-sm font-medium btn-primary">Try Free for 7 Days</a>
-                  </div>
-                </div>
-                <div class="interactive-demo-card p-6 rounded-xl shadow-xl transition-all duration-500">
-                  <h4 class="text-xl font-semibold text-teal-300 mb-3">Marketing ROI Dashboard</h4>
-                  <p class="text-slate-300 text-sm mb-4 leading-relaxed">Visualize your marketing spend across channels and measure ROI, CPL, and campaign effectiveness.</p>
-                  <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
-                    <a href="#view-demo-roi" class="flex-1 text-center bg-teal-600 hover:bg-teal-500 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 hover:shadow-lg">View Demo</a>
-                    <a href="#try-free-roi" class="flex-1 text-center bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-600 text-white px-4 py-2.5 rounded-lg text-sm font-medium btn-primary">Try Free for 7 Days</a>
-                  </div>
-                </div>
-                <div class="interactive-demo-card p-6 rounded-xl shadow-xl transition-all duration-500">
-                  <h4 class="text-xl font-semibold text-teal-300 mb-3">Holistic BI Analytics Suite</h4>
-                  <p class="text-slate-300 text-sm mb-4 leading-relaxed">Integrate data from multiple sources for comprehensive business intelligence and strategic insights.</p>
-                  <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
-                    <a href="#view-demo-bi" class="flex-1 text-center bg-teal-600 hover:bg-teal-500 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 hover:shadow-lg">View Demo</a>
-                    <a href="#try-free-bi" class="flex-1 text-center bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-600 text-white px-4 py-2.5 rounded-lg text-sm font-medium btn-primary">Try Free for 7 Days</a>
-                  </div>
-                </div>
+          <div class="mt-8 pt-6 border-t border-slate-700">
+            <div class="flex items-center mb-6"><h3 class="text-xl md:text-2xl font-bold text-white">Interactive Dashboards & Demos</h3><div class="h-0.5 md:h-1 bg-gradient-to-r from-teal-400 to-cyan-500 flex-grow ml-4 rounded-full"></div></div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                <div class="bg-slate-800/70 p-4 rounded-lg shadow-lg menu-card-interactive transition-all duration-300"><h4 class="text-lg font-semibold text-teal-300 mb-2">SEO Performance Dashboard</h4><p class="text-slate-300 text-xs mb-3">Track your keyword rankings, organic traffic, backlink profile, and technical SEO health in real-time.</p><div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2"><a href="/demo/marketing-dashboard" class="flex-1 text-center bg-teal-600 hover:bg-teal-500 text-white px-3 py-1.5 rounded-md text-xs font-medium transition-colors">View Demo</a><a href="#try-free-seo" class="flex-1 text-center bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-600 text-white px-3 py-1.5 rounded-md text-xs font-medium btn-primary">Try Free for 7 Days</a></div></div>
+                <div class="bg-slate-800/70 p-4 rounded-lg shadow-lg menu-card-interactive transition-all duration-300"><h4 class="text-lg font-semibold text-teal-300 mb-2">Marketing ROI Dashboard</h4><p class="text-slate-300 text-xs mb-3">Visualize your marketing spend across channels and measure ROI, CPL, and campaign effectiveness.</p><div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2"><a href="#view-demo-roi" class="flex-1 text-center bg-teal-600 hover:bg-teal-500 text-white px-3 py-1.5 rounded-md text-xs font-medium transition-colors">View Demo</a><a href="#try-free-roi" class="flex-1 text-center bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-600 text-white px-3 py-1.5 rounded-md text-xs font-medium btn-primary">Try Free for 7 Days</a></div></div>
+                <div class="bg-slate-800/70 p-4 rounded-lg shadow-lg menu-card-interactive transition-all duration-300"><h4 class="text-lg font-semibold text-teal-300 mb-2">Holistic BI Analytics Suite</h4><p class="text-slate-300 text-xs mb-3">Integrate data from multiple sources for comprehensive business intelligence and strategic insights.</p><div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2"><a href="#view-demo-bi" class="flex-1 text-center bg-teal-600 hover:bg-teal-500 text-white px-3 py-1.5 rounded-md text-xs font-medium transition-colors">View Demo</a><a href="#try-free-bi" class="flex-1 text-center bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-600 text-white px-3 py-1.5 rounded-md text-xs font-medium btn-primary">Try Free for 7 Days</a></div></div>
             </div>
           </div>
         </div>
-        <!-- ...existing other menu content sections remain the same... -->
         <div class="menu-content hidden" id="industries-menu"><div class="flex items-center mb-6"><h2 class="text-2xl md:text-3xl font-bold text-white">Industries We Serve</h2><div class="h-0.5 md:h-1 bg-gradient-to-r from-sky-500 to-indigo-500 flex-grow ml-4 rounded-full"></div></div><div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4 md:gap-y-6"><div><h3 class="text-lg md:text-xl font-semibold text-sky-400 mb-2 md:mb-3">Construction & Real Estate</h3><ul class="space-y-1 text-sm" id="industries-construction-links"></ul></div><div><h3 class="text-lg md:text-xl font-semibold text-sky-400 mb-2 md:mb-3">Professional Services</h3><ul class="space-y-1 text-sm" id="industries-professional-links"></ul></div><div><h3 class="text-lg md:text-xl font-semibold text-sky-400 mb-2 md:mb-3">Other Key Sectors</h3><ul class="space-y-1 text-sm" id="industries-other-links"></ul></div></div></div>
         <div class="menu-content hidden" id="locations-menu"><div class="flex items-center mb-6"><h2 class="text-2xl md:text-3xl font-bold text-white">Our Locations</h2><div class="h-0.5 md:h-1 bg-gradient-to-r from-sky-500 to-indigo-500 flex-grow ml-4 rounded-full"></div></div><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-4 md:gap-y-6"><div><h3 class="text-lg md:text-xl font-semibold text-sky-400 mb-2 md:mb-3">Los Angeles Area</h3><ul class="space-y-1 text-sm" id="locations-la-links"></ul><h3 class="text-lg md:text-xl font-semibold text-sky-400 mt-3 md:mt-4 mb-2 md:mb-3">Other California</h3><ul class="space-y-1 text-sm" id="locations-ca-other-links"></ul></div><div><h3 class="text-lg md:text-xl font-semibold text-sky-400 mb-2 md:mb-3">East Coast Cities</h3><ul class="space-y-1 text-sm" id="locations-east-links"></ul></div><div><h3 class="text-lg md:text-xl font-semibold text-sky-400 mb-2 md:mb-3">Central & Southern Cities</h3><ul class="space-y-1 text-sm" id="locations-central-south-links"></ul></div><div><h3 class="text-lg md:text-xl font-semibold text-sky-400 mb-2 md:mb-3">More Cities</h3><ul class="space-y-1 text-sm" id="locations-more-links"></ul><a href="https://www.holisticgrowthmarketing.com/locations" class="mt-3 inline-block text-sky-400 font-medium hover:text-sky-300 text-xs md:text-sm">View All Locations →</a></div></div></div>
         <div class="menu-content hidden" id="resources-menu"><div class="flex items-center mb-6"><h2 class="text-2xl md:text-3xl font-bold text-white">Knowledge Hub</h2><div class="h-0.5 md:h-1 bg-gradient-to-r from-sky-500 to-indigo-500 flex-grow ml-4 rounded-full"></div></div><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-4 md:gap-y-6"><div><h3 class="text-lg md:text-xl font-semibold text-sky-400 mb-2 md:mb-3">Learn Core Concepts</h3><ul class="space-y-1 text-sm" id="resources-learn-links"></ul></div><div><h3 class="text-lg md:text-xl font-semibold text-sky-400 mb-2 md:mb-3">Articles & Insights</h3><ul class="space-y-1 text-sm" id="resources-articles-links"></ul></div><div><h3 class="text-lg md:text-xl font-semibold text-sky-400 mb-2 md:mb-3">Guides & Practical Tools</h3><ul class="space-y-1 text-sm" id="resources-guides-links"></ul></div><div><h3 class="text-lg md:text-xl font-semibold text-sky-400 mb-2 md:mb-3">Browse by Topic</h3><ul class="space-y-1 text-sm" id="resources-topics-links"></ul><a href="https://www.holisticgrowthmarketing.com/resources" class="mt-3 inline-block text-sky-400 font-medium hover:text-sky-300 text-xs md:text-sm">All Resources →</a></div></div></div>
@@ -343,7 +125,6 @@
     </section>
   </main>
 
-  <!-- ...existing footer content remains the same... -->
   <footer class="bg-slate-900 text-slate-400 pt-16 pb-8 relative overflow-hidden">
     <div class="canvas-container" id="footer-background"></div>
     <div class="container mx-auto px-6 relative z-10">
@@ -403,7 +184,7 @@
         { path: '/industries/residential-construction-seo', title: 'Residential Construction SEO', group: 'construction' },
         { path: '/industries/nonresidential-construction-seo', title: 'Nonresidential Construction SEO', group: 'construction' },
         { path: '/sectors/construction-seo', title: 'Construction Sector SEO', group: 'construction' },
-        { path: '/industries/roofing', group: 'construction' }, // slugToTitle will generate "Roofing"
+        { path: '/industries/roofing', group: 'construction' },
         { path: '/industries/property-management-seo', title: 'Property Management SEO', group: 'construction' },
         { path: '/industries/finance-banking-seo', title: 'Finance & Banking SEO', group: 'professional' },
         { path: '/industries/healthcare-seo', title: 'Healthcare SEO', group: 'professional' },
@@ -450,22 +231,18 @@
         { path: '/tools/chrome-extension-builder', group: 'dev-utility' }, { path: '/tools/ai-output-cleaner-tool', group: 'ai-automation' },
         { path: '/tools/advanced-prompt-generator', group: 'ai-automation' }, { path: '/tools/ai-code-generator', group: 'ai-automation' },
       ],
-      company: [ // Ensure these have titles or rely on slugToTitle
-        { path: '/about-us', group: 'about' },
-        { path: '/our-mission', group: 'about', title: 'Our Mission' }, // Explicit title
-        { path: '/ethics-statement', group: 'about', title: 'Ethics Statement' }, // Explicit title
-        { path: '/resources/authors', group: 'work' },
-        { path: '/author/jason-gibson', group: 'work' },
-        { path: '/projects/web-projects', group: 'work' },
-        { path: '/demo/marketing-dashboard', group: 'work' },
-        { path: '/contact', group: 'connect' },
+      company: [
+        { path: '/about-us', group: 'about' }, { path: '/our-mission', group: 'about', title: 'Our Mission' },
+        { path: '/ethics-statement', group: 'about', title: 'Ethics Statement' }, { path: '/resources/authors', group: 'work' },
+        { path: '/author/jason-gibson', group: 'work' }, { path: '/projects/web-projects', group: 'work' },
+        { path: '/demo/marketing-dashboard', group: 'work' }, { path: '/contact', group: 'connect' },
         { path: '/term/privacy-policy', group: 'connect', title: 'Privacy Policy' },
         { path: '/term/cookies', group: 'connect', title: 'Cookie Policy' },
-        { path: '/term/licensing', group: 'connect', title: 'Terms of Use' }, // Explicit title for "Terms of Use"
+        { path: '/term/licensing', group: 'connect', title: 'Terms of Use' },
       ]
     };
 
- 
+    // --- HELPER FUNCTIONS ---
     function slugToTitle(slug, fullPath = '') {
         if (!slug) return '';
         let title = slug;
@@ -486,9 +263,7 @@
             '/industries/nonresidential-construction-seo': 'Nonresidential Construction SEO',
             '/industries/durable-goods-manufacturing-seo': 'Durable Goods Mfg. SEO',
             '/sectors/construction-seo': 'Construction Sector SEO',
-            // Titles for items that might be used in legal and don't have one in sitemapData.company
-             '/our-mission': 'Our Mission',
-             '/ethics-statement': 'Ethics Statement'
+             '/our-mission': 'Our Mission', '/ethics-statement': 'Ethics Statement'
         };
         if (pathOverrides[fullPath]) return pathOverrides[fullPath];
         title = title.replace(/-/g, ' ').replace(/\bseo\b/gi, 'SEO').replace(/\bai\b/gi, 'AI');
@@ -498,295 +273,72 @@
         return title.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
     }
 
-    function populateLinks(items, linkMappings) { // For Mega Menu
+    function populateLinks(items, linkMappings) {
         items.forEach(item => {
             const pathSegments = item.path.split('/').filter(Boolean);
-            const slug = pathSegments.pop();
+            const slug = pathSegments.pop() || pathSegments.pop();
             const title = item.title || slugToTitle(slug, item.path);
             const fullUrl = baseUrl + item.path;
             const container = document.getElementById(linkMappings[item.group]);
             if (container) {
-                const li = document.createElement('li');
-                const a = document.createElement('a');
-                a.href = fullUrl; a.textContent = title;
-                a.className = 'submenu-item'; // Uses .submenu-item styling
+                const li = document.createElement('li'); const a = document.createElement('a');
+                a.href = fullUrl; a.textContent = title; a.className = 'submenu-item';
                 li.appendChild(a); container.appendChild(li);
             }
         });
     }
 
-    function createFooterLinkItem(itemPath, itemTitle) { // For Footer
-        const li = document.createElement('li');
-        const a = document.createElement('a');
-        a.href = baseUrl + itemPath;
-        a.textContent = itemTitle;
-        a.className = 'footer-link text-xs'; // Uses .footer-link styling
-        li.appendChild(a);
-        return li;
+    function createFooterLinkItem(itemPath, itemTitle) {
+        const li = document.createElement('li'); const a = document.createElement('a');
+        a.href = baseUrl + itemPath; a.textContent = itemTitle; a.className = 'footer-link text-xs';
+        li.appendChild(a); return li;
     }
 
-    function populateFooterLinks(items, containerId, maxItems = 7) { // For Footer
-        console.log(`Attempting to populate footer links for container ID: ${containerId}`);
+    function populateFooterLinks(items, containerId, maxItems = 7) {
         const container = document.getElementById(containerId);
-        if (!container) {
-            console.error(`Footer container with ID '${containerId}' NOT FOUND.`);
-            return;
+        if (!container) { console.error(`Footer container ID '${containerId}' not found.`); return; }
+        container.innerHTML = '';
+        let count = 0;
+        for (const item of items) {
+            if (count >= maxItems) break;
+            const title = item.title || slugToTitle(item.path.split('/').pop() || item.path.split('/').slice(-2,-1)[0], item.path);
+            if (title) { container.appendChild(createFooterLinkItem(item.path, title)); count++; }
         }
-        console.log(`Found footer container: ${containerId}`);
-        container.innerHTML = ''; // Clear existing items
-        let itemCount = 0;
-        items.slice(0, maxItems).forEach(item => {
-            // Ensure title is derived correctly, using item.title if present (as in company data for legal)
-            // or generating from slug if not.
-            const title = item.title || slugToTitle(item.path.split('/').pop(), item.path);
-            if (title) { // Only add if a title can be determined
-                container.appendChild(createFooterLinkItem(item.path, title));
-                itemCount++;
-            } else {
-                console.warn(`Could not determine title for path: ${item.path} in ${containerId}`);
-            }
-        });
-        console.log(`Populated ${itemCount} links in ${containerId}.`);
     }
 
     document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('currentYear').textContent = new Date().getFullYear();
 
-       
         populateLinks(sitemapData.services, {'seo': 'services-seo-links', 'content-digital': 'services-content-digital-links', 'data-web': 'services-data-web-links', 'optimization-mgmt': 'services-optimization-mgmt-links'});
         populateLinks(sitemapData.industries, {'construction': 'industries-construction-links', 'professional': 'industries-professional-links', 'other': 'industries-other-links'});
         populateLinks(sitemapData.locations, {'la': 'locations-la-links', 'ca-other': 'locations-ca-other-links', 'east': 'locations-east-links', 'central-south': 'locations-central-south-links', 'more': 'locations-more-links'});
         populateLinks(sitemapData.resources, {'learn': 'resources-learn-links', 'articles': 'resources-articles-links', 'guides': 'resources-guides-links', 'topics': 'resources-topics-links'});
         populateLinks(sitemapData.tools, {'content-analysis': 'tools-content-analysis-links', 'dev-utility': 'tools-dev-utility-links', 'ai-automation': 'tools-ai-automation-links', 'seo-specific': 'tools-seo-specific-links'});
-        populateLinks(sitemapData.company.filter(c => c.group === 'about' || c.group === 'work' || c.path === '/contact'), {'about': 'company-about-links', 'work': 'company-work-links', 'connect': 'company-connect-links'});
+        const companyMegaMenuLinks = sitemapData.company.filter(c => c.group === 'about' || c.group === 'work' || c.path === '/contact');
+        populateLinks(companyMegaMenuLinks, {'about': 'company-about-links', 'work': 'company-work-links', 'connect': 'company-connect-links'});
 
-      
         populateFooterLinks(sitemapData.services, 'footer-services-links', 6);
         populateFooterLinks(sitemapData.resources.filter(r => r.group === 'learn' || r.group === 'guides' || r.group === 'articles'), 'footer-resources-links', 6);
         populateFooterLinks(sitemapData.tools, 'footer-tools-links', 6);
         populateFooterLinks(sitemapData.industries, 'footer-industries-links', 6);
-
-        const locationsHalf = Math.ceil(sitemapData.locations.length / 2);
-        populateFooterLinks(sitemapData.locations.slice(0, locationsHalf), 'footer-locations1-links', 7); 
-        populateFooterLinks(sitemapData.locations.slice(locationsHalf), 'footer-locations2-links', 7);
-
-        const legalLinksForFooter = sitemapData.company.filter(c =>
-            c.path === '/term/privacy-policy' ||
-            c.path === '/term/cookies' ||
-            c.path === '/term/licensing' ||
-            c.path === '/our-mission' ||
-            c.path === '/ethics-statement'
-        );
+        const locationsCount = sitemapData.locations.length;
+        const locationsHalf = Math.ceil(locationsCount / 2);
+        populateFooterLinks(sitemapData.locations.slice(0, locationsHalf), 'footer-locations1-links', 7);
+        populateFooterLinks(sitemapData.locations.slice(locationsHalf, locationsCount), 'footer-locations2-links', 7);
+        const legalLinksForFooter = sitemapData.company.filter(c => c.path === '/term/privacy-policy' || c.path === '/term/cookies' || c.path === '/term/licensing' || c.path === '/our-mission' || c.path === '/ethics-statement');
         populateFooterLinks(legalLinksForFooter, 'footer-legal-links', 5);
 
-        // Mega Menu JS Interaction Logic with enhanced animations
-        const menuItems = document.querySelectorAll('.menu-item-nav');
-        const megaMenu = document.querySelector('.mega-menu');
-        const menuContents = document.querySelectorAll('.menu-content');
-        const closeBtn = megaMenu.querySelector('.close-btn');
-        const hamburgerBtn = document.getElementById('hamburger-menu');
-        const body = document.body;
-        let activeMenuContentElement = null;
-
-        function openMenu(menuId) {
-            const targetMenuContent = document.getElementById(menuId + '-menu');
-            megaMenu.classList.add('active');
-            body.style.overflow = 'hidden';
-            hamburgerBtn.setAttribute('aria-expanded', 'true');
-            menuContents.forEach(content => content.style.display = 'none');
-            if (targetMenuContent) {
-                targetMenuContent.style.display = 'block';
-                activeMenuContentElement = targetMenuContent;
-                const listItems = targetMenuContent.querySelectorAll('.submenu-item, .menu-card-interactive, .interactive-demo-card');
-                gsap.fromTo(listItems, 
-                    { opacity: 0, y: 20, rotationX: -15 }, 
-                    { opacity: 1, y: 0, rotationX: 0, stagger: 0.05, duration: 0.6, ease: "power3.out" }
-                );
-                // Animate section titles
-                const titles = targetMenuContent.querySelectorAll('h2, h3');
-                gsap.fromTo(titles,
-                    { opacity: 0, x: -30 },
-                    { opacity: 1, x: 0, stagger: 0.1, duration: 0.8, ease: "power2.out" }
-                );
-            } else { 
-                activeMenuContentElement = null; 
-            }
-        }
-
-        function closeMegaMenu() {
-            megaMenu.classList.remove('active');
-            body.style.overflow = 'auto';
-            menuContents.forEach(content => content.style.display = 'none');
-            activeMenuContentElement = null;
-            hamburgerBtn.setAttribute('aria-expanded', 'false');
-        }
-
-        menuItems.forEach(item => { 
-            item.addEventListener('click', (e) => { 
-                e.preventDefault(); 
-                const menuId = item.dataset.menu; 
-                const targetMenuContent = document.getElementById(menuId + '-menu'); 
-                if (megaMenu.classList.contains('active') && activeMenuContentElement === targetMenuContent) { 
-                    closeMegaMenu(); 
-                } else { 
-                    openMenu(menuId); 
-                } 
-            }); 
-        });
-
-        hamburgerBtn.addEventListener('click', () => { 
-            if (megaMenu.classList.contains('active')) { 
-                closeMegaMenu(); 
-            } else { 
-                if (!activeMenuContentElement && menuItems.length > 0) { 
-                    openMenu(menuItems[0].dataset.menu); 
-                } else if (activeMenuContentElement) { 
-                    openMenu(activeMenuContentElement.id.replace('-menu','')); 
-                } else if (menuItems.length > 0) { 
-                    openMenu(menuItems[0].dataset.menu);
-                }
-            }
-        });
-
+        const menuItems = document.querySelectorAll('.menu-item-nav'); const megaMenu = document.querySelector('.mega-menu'); const menuContents = document.querySelectorAll('.menu-content'); const closeBtn = megaMenu.querySelector('.close-btn'); const hamburgerBtn = document.getElementById('hamburger-menu'); const body = document.body; let activeMenuContentElement = null;
+        function openMenu(menuId) { const targetMenuContent = document.getElementById(menuId + '-menu'); megaMenu.classList.add('active'); body.style.overflow = 'hidden'; hamburgerBtn.setAttribute('aria-expanded', 'true'); menuContents.forEach(content => content.style.display = 'none'); if (targetMenuContent) { targetMenuContent.style.display = 'block'; activeMenuContentElement = targetMenuContent; const listItems = targetMenuContent.querySelectorAll('.submenu-item, .menu-card-interactive'); gsap.fromTo(listItems, { opacity: 0, x: -10 }, { opacity: 1, x: 0, stagger: 0.03, duration: 0.3, ease: "power2.out" }); } else { activeMenuContentElement = null; } }
+        function closeMegaMenu() { megaMenu.classList.remove('active'); body.style.overflow = 'auto'; menuContents.forEach(content => content.style.display = 'none'); activeMenuContentElement = null; hamburgerBtn.setAttribute('aria-expanded', 'false'); }
+        menuItems.forEach(item => { item.addEventListener('click', (e) => { e.preventDefault(); const menuId = item.dataset.menu; const targetMenuContent = document.getElementById(menuId + '-menu'); if (megaMenu.classList.contains('active') && activeMenuContentElement === targetMenuContent) { closeMegaMenu(); } else { openMenu(menuId); } }); });
+        hamburgerBtn.addEventListener('click', () => { if (megaMenu.classList.contains('active')) { closeMegaMenu(); } else { if (!activeMenuContentElement && menuItems.length > 0) { openMenu(menuItems[0].dataset.menu); } else if (activeMenuContentElement) { openMenu(activeMenuContentElement.id.replace('-menu','')); } else if (menuItems.length > 0) { openMenu(menuItems[0].dataset.menu);}}});
         closeBtn.addEventListener('click', closeMegaMenu);
         megaMenu.addEventListener('click', (e) => { if (e.target === megaMenu) closeMegaMenu(); });
 
-     
-        const menuBackgroundContainer = document.getElementById('menu-background');
-        if (menuBackgroundContainer && typeof THREE !== 'undefined' && typeof gsap !== 'undefined') {
-            const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(75, menuBackgroundContainer.clientWidth / menuBackgroundContainer.clientHeight, 0.1, 1000);
-            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-            renderer.setSize(menuBackgroundContainer.clientWidth, menuBackgroundContainer.clientHeight);
-            menuBackgroundContainer.appendChild(renderer.domElement);
-
-            
-            const particleSystems = [];
-            const particleConfigs = [
-                { count: 3000, size: 0.008, color: 0x38bdf8, opacity: 0.6, speed: 0.00005 },
-                { count: 1500, size: 0.012, color: 0x8b5cf6, opacity: 0.4, speed: 0.00003 },
-                { count: 800, size: 0.015, color: 0x06b6d4, opacity: 0.3, speed: 0.00007 }
-            ];
-
-            particleConfigs.forEach((config, index) => {
-                const particlesGeometry = new THREE.BufferGeometry();
-                const posArray = new Float32Array(config.count * 3);
-                for (let i = 0; i < config.count * 3; i++) {
-                    posArray[i] = (Math.random() - 0.5) * (Math.random() * 12 + 6);
-                }
-                particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-                
-                const particlesMaterial = new THREE.PointsMaterial({
-                    size: config.size,
-                    color: config.color,
-                    transparent: true,
-                    opacity: config.opacity,
-                    blending: THREE.AdditiveBlending
-                });
-                
-                const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
-                particlesMesh.userData = { speed: config.speed, index };
-                scene.add(particlesMesh);
-                particleSystems.push(particlesMesh);
-            });
-
-            camera.position.z = 5;
-            const mouse = { x: 0, y: 0 };
-            let mouseMoveTimeout;
-
-            document.addEventListener('mousemove', (event) => {
-                clearTimeout(mouseMoveTimeout);
-                mouseMoveTimeout = setTimeout(() => {
-                    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-                    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-                }, 30);
-            });
-
-            function animateMenuBackground() {
-                requestAnimationFrame(animateMenuBackground);
-                
-                particleSystems.forEach((system, index) => {
-                    const speed = system.userData.speed;
-                    system.rotation.y += speed + (mouse.x * 0.0001);
-                    system.rotation.x += speed * 0.5 + (mouse.y * 0.00005);
-                    system.rotation.z += speed * 0.3;
-                });
-
-                renderer.render(scene, camera);
-            }
-            animateMenuBackground();
-
-            window.addEventListener('resize', () => {
-                if (menuBackgroundContainer.clientWidth > 0 && menuBackgroundContainer.clientHeight > 0) {
-                    camera.aspect = menuBackgroundContainer.clientWidth / menuBackgroundContainer.clientHeight;
-                    camera.updateProjectionMatrix();
-                    renderer.setSize(menuBackgroundContainer.clientWidth, menuBackgroundContainer.clientHeight);
-                }
-            });
-        }
-
-       
-        const footerBackgroundContainer = document.getElementById('footer-background');
-        if (footerBackgroundContainer && typeof THREE !== 'undefined' && typeof gsap !== 'undefined') {
-            const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(75, footerBackgroundContainer.clientWidth / footerBackgroundContainer.clientHeight, 0.1, 1000);
-            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-            renderer.setSize(footerBackgroundContainer.clientWidth, footerBackgroundContainer.clientHeight);
-            footerBackgroundContainer.appendChild(renderer.domElement);
-
-        
-            const particlesGeometry = new THREE.BufferGeometry();
-            const particlesCnt = window.innerWidth < 768 ? 2000 : 4000;
-            const posArray = new Float32Array(particlesCnt * 3);
-            
-            for (let i = 0; i < particlesCnt * 3; i += 3) {
-                posArray[i] = (Math.random() - 0.5) * 10;
-                posArray[i + 1] = (Math.random() - 0.5) * 8;
-                posArray[i + 2] = (Math.random() - 0.5) * 8;
-            }
-            
-            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-            
-            const particlesMaterial = new THREE.PointsMaterial({
-                size: 0.01,
-                color: 0x6366f1,
-                transparent: true,
-                opacity: 0.7,
-                blending: THREE.AdditiveBlending
-            });
-            
-            const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
-            scene.add(particlesMesh);
-            camera.position.z = 4;
-
-            let time = 0;
-            function animateFooterBackground() {
-                requestAnimationFrame(animateFooterBackground);
-                time += 0.01;
-                
-                const positions = particlesMesh.geometry.attributes.position.array;
-                for (let i = 1; i < positions.length; i += 3) {
-                    positions[i] = Math.sin(time + positions[i - 1] * 0.1) * 0.5;
-                }
-                particlesMesh.geometry.attributes.position.needsUpdate = true;
-                
-                particlesMesh.rotation.y += 0.0001;
-                particlesMesh.rotation.x += 0.00005;
-                
-                renderer.render(scene, camera);
-            }
-            animateFooterBackground();
-
-            window.addEventListener('resize', () => {
-                if (footerBackgroundContainer.clientWidth > 0 && footerBackgroundContainer.clientHeight > 0) {
-                    camera.aspect = footerBackgroundContainer.clientWidth / footerBackgroundContainer.clientHeight;
-                    camera.updateProjectionMatrix();
-                    renderer.setSize(footerBackgroundContainer.clientWidth, footerBackgroundContainer.clientHeight);
-                }
-            });
-        }
+        const menuBackgroundContainer = document.getElementById('menu-background'); if (menuBackgroundContainer && typeof THREE !== 'undefined' && typeof gsap !== 'undefined') { const scene = new THREE.Scene(); const camera = new THREE.PerspectiveCamera(75, menuBackgroundContainer.clientWidth / menuBackgroundContainer.clientHeight, 0.1, 1000); const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true }); renderer.setSize(menuBackgroundContainer.clientWidth, menuBackgroundContainer.clientHeight); menuBackgroundContainer.appendChild(renderer.domElement); const particlesGeometry = new THREE.BufferGeometry(); const particlesCnt = window.innerWidth < 768 ? 2000 : 5000; const posArray = new Float32Array(particlesCnt * 3); for (let i = 0; i < particlesCnt * 3; i++) { posArray[i] = (Math.random() - 0.5) * (Math.random() * 10 + 5) ; } particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3)); const particlesMaterial = new THREE.PointsMaterial({size: 0.008, color: 0x38bdf8, transparent: true, opacity: 0.5}); const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial); scene.add(particlesMesh); camera.position.z = 4; const mouse = { x: 0, y: 0 }; let MOUSEMOVE_TIMEOUT; document.addEventListener('mousemove', (event) => { clearTimeout(MOUSEMOVE_TIMEOUT); MOUSEMOVE_TIMEOUT = setTimeout(() => { mouse.x = (event.clientX / window.innerWidth) * 2 - 1; mouse.y = -(event.clientY / window.innerHeight) * 2 + 1; }, 50); }); function animateMenuBackground() { requestAnimationFrame(animateMenuBackground); particlesMesh.rotation.y += 0.00005 + (mouse.x * 0.0001); particlesMesh.rotation.x += 0.00002 + (mouse.y * 0.00005); renderer.render(scene, camera); } animateMenuBackground(); window.addEventListener('resize', () => { if (menuBackgroundContainer.clientWidth > 0 && menuBackgroundContainer.clientHeight > 0) { camera.aspect = menuBackgroundContainer.clientWidth / menuBackgroundContainer.clientHeight; camera.updateProjectionMatrix(); renderer.setSize(menuBackgroundContainer.clientWidth, menuBackgroundContainer.clientHeight); } }); }
+        const footerBackgroundContainer = document.getElementById('footer-background'); if (footerBackgroundContainer && typeof THREE !== 'undefined' && typeof gsap !== 'undefined') { const scene = new THREE.Scene(); const camera = new THREE.PerspectiveCamera(75, footerBackgroundContainer.clientWidth / footerBackgroundContainer.clientHeight, 0.1, 1000); const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true }); renderer.setSize(footerBackgroundContainer.clientWidth, footerBackgroundContainer.clientHeight); footerBackgroundContainer.appendChild(renderer.domElement); const particlesGeometry = new THREE.BufferGeometry(); const particlesCnt = window.innerWidth < 768 ? 1500 : 3000; const posArray = new Float32Array(particlesCnt * 3); for (let i = 0; i < particlesCnt * 3; i++) { posArray[i] = (Math.random() - 0.5) * (Math.random() * 8 + 4) ; } particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3)); const particlesMaterial = new THREE.PointsMaterial({size: 0.007, color: 0x6366f1, transparent: true, opacity: 0.6}); const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial); scene.add(particlesMesh); camera.position.z = 3.5; function animateFooterBackground() { requestAnimationFrame(animateFooterBackground); particlesMesh.rotation.y += 0.00004; particlesMesh.rotation.x += 0.000015; renderer.render(scene, camera); } animateFooterBackground(); window.addEventListener('resize', () => { if (footerBackgroundContainer.clientWidth > 0 && footerBackgroundContainer.clientHeight > 0) { camera.aspect = footerBackgroundContainer.clientWidth / footerBackgroundContainer.clientHeight; camera.updateProjectionMatrix(); renderer.setSize(footerBackgroundContainer.clientWidth, footerBackgroundContainer.clientHeight); } }); }
     });
   </script>
 </body>
 </html>
-
