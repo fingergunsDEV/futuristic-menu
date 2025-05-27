@@ -465,7 +465,7 @@
       ]
     };
 
-    // --- HELPER FUNCTIONS ---
+ 
     function slugToTitle(slug, fullPath = '') {
         if (!slug) return '';
         let title = slug;
@@ -552,7 +552,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('currentYear').textContent = new Date().getFullYear();
 
-        // Populate Mega Menu links
+       
         populateLinks(sitemapData.services, {'seo': 'services-seo-links', 'content-digital': 'services-content-digital-links', 'data-web': 'services-data-web-links', 'optimization-mgmt': 'services-optimization-mgmt-links'});
         populateLinks(sitemapData.industries, {'construction': 'industries-construction-links', 'professional': 'industries-professional-links', 'other': 'industries-other-links'});
         populateLinks(sitemapData.locations, {'la': 'locations-la-links', 'ca-other': 'locations-ca-other-links', 'east': 'locations-east-links', 'central-south': 'locations-central-south-links', 'more': 'locations-more-links'});
@@ -560,14 +560,14 @@
         populateLinks(sitemapData.tools, {'content-analysis': 'tools-content-analysis-links', 'dev-utility': 'tools-dev-utility-links', 'ai-automation': 'tools-ai-automation-links', 'seo-specific': 'tools-seo-specific-links'});
         populateLinks(sitemapData.company.filter(c => c.group === 'about' || c.group === 'work' || c.path === '/contact'), {'about': 'company-about-links', 'work': 'company-work-links', 'connect': 'company-connect-links'});
 
-        // Populate Footer Links
+      
         populateFooterLinks(sitemapData.services, 'footer-services-links', 6);
         populateFooterLinks(sitemapData.resources.filter(r => r.group === 'learn' || r.group === 'guides' || r.group === 'articles'), 'footer-resources-links', 6);
         populateFooterLinks(sitemapData.tools, 'footer-tools-links', 6);
         populateFooterLinks(sitemapData.industries, 'footer-industries-links', 6);
 
         const locationsHalf = Math.ceil(sitemapData.locations.length / 2);
-        populateFooterLinks(sitemapData.locations.slice(0, locationsHalf), 'footer-locations1-links', 7); // Max 7 per column
+        populateFooterLinks(sitemapData.locations.slice(0, locationsHalf), 'footer-locations1-links', 7); 
         populateFooterLinks(sitemapData.locations.slice(locationsHalf), 'footer-locations2-links', 7);
 
         const legalLinksForFooter = sitemapData.company.filter(c =>
@@ -651,7 +651,7 @@
         closeBtn.addEventListener('click', closeMegaMenu);
         megaMenu.addEventListener('click', (e) => { if (e.target === megaMenu) closeMegaMenu(); });
 
-        // Enhanced 3D Background for Mega Menu
+     
         const menuBackgroundContainer = document.getElementById('menu-background');
         if (menuBackgroundContainer && typeof THREE !== 'undefined' && typeof gsap !== 'undefined') {
             const scene = new THREE.Scene();
@@ -660,7 +660,7 @@
             renderer.setSize(menuBackgroundContainer.clientWidth, menuBackgroundContainer.clientHeight);
             menuBackgroundContainer.appendChild(renderer.domElement);
 
-            // Create multiple particle systems with different properties
+            
             const particleSystems = [];
             const particleConfigs = [
                 { count: 3000, size: 0.008, color: 0x38bdf8, opacity: 0.6, speed: 0.00005 },
@@ -725,7 +725,7 @@
             });
         }
 
-        // Enhanced 3D Background for Footer
+       
         const footerBackgroundContainer = document.getElementById('footer-background');
         if (footerBackgroundContainer && typeof THREE !== 'undefined' && typeof gsap !== 'undefined') {
             const scene = new THREE.Scene();
@@ -734,7 +734,7 @@
             renderer.setSize(footerBackgroundContainer.clientWidth, footerBackgroundContainer.clientHeight);
             footerBackgroundContainer.appendChild(renderer.domElement);
 
-            // Create wave-like particle system for footer
+        
             const particlesGeometry = new THREE.BufferGeometry();
             const particlesCnt = window.innerWidth < 768 ? 2000 : 4000;
             const posArray = new Float32Array(particlesCnt * 3);
